@@ -1,6 +1,6 @@
 import tcod
 
-from actions import MovementAction
+from engine import Engine
 from entity import Entity
 from input_handlers import MainHandler
 
@@ -23,12 +23,12 @@ def main():
     monster = Entity(x=int(SCREEN_WIDTH / 4), y=int(SCREEN_HEIGHT / 4), char="A")
 
     entities = {player, monster}
+    main_handler = MainHandler()
+    engine = Engine(entities=entities, event_handler=main_handler, player=player)
 
     tileset = tcod.tileset.load_tilesheet(
         "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
     )
-
-    handler = MainHandler()
 
     with tcod.context.new(
         columns=SCREEN_WIDTH, rows=SCREEN_HEIGHT, tileset=tileset, title="rogue0"
@@ -37,19 +37,9 @@ def main():
             width=SCREEN_WIDTH, height=SCREEN_HEIGHT, order="F"
         )
         while True:
-            root_console.print(
-                x=player.x, y=player.y, text=player.char, fg=player.color
-            )
-            context.present(root_console)
-            root_console.clear()
-
-            for event in tcod.event.wait():
-                action = handler.on_event(event)
-
-                if isinstance(action, MovementAction):
-                    player.move(dx=action.dx, dy=action.dy)
-                else:
-                    continue
+            events = tcod.event.wait()
+            engine.render(console=root_console, context=context)
+            engine.handle_events(events)
 
 
 if __name__ == "__main__":

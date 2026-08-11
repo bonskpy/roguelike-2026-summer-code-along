@@ -18,8 +18,6 @@ class MainHandler:
         action: Optional[Action] = None
 
         match event:
-            case tcod.event.Quit():
-                raise SystemExit
             case tcod.event.KeyDown(sym=tcod.event.KeySym.UP):
                 action = MovementAction(dx=0, dy=-1)
             case tcod.event.KeyDown(sym=tcod.event.KeySym.DOWN):
