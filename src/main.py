@@ -1,6 +1,7 @@
 import tcod
 
 from actions import MovementAction
+from entity import Entity
 from input_handlers import MainHandler
 
 SCREEN_WIDTH = 80
@@ -11,15 +12,17 @@ SCREEN_HEIGHT = 80
 # will turncate return value. Casting string decimal to int throws error. It is good
 # practice to use defensive casting (try/except) and return ValueError on failure.
 
-player_x = int(SCREEN_WIDTH / 2)
-player_y = int(SCREEN_HEIGHT / 2)
-
 
 def main():
     print("Hello from rogue0!")
 
     player_x = int(SCREEN_WIDTH / 2)
     player_y = int(SCREEN_HEIGHT / 2)
+
+    player = Entity(x=int(SCREEN_WIDTH / 2), y=int(SCREEN_HEIGHT / 2), char="@")
+    monster = Entity(x=int(SCREEN_WIDTH / 4), y=int(SCREEN_HEIGHT / 4), char="A")
+
+    entities = {player, monster}
 
     tileset = tcod.tileset.load_tilesheet(
         "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
@@ -34,7 +37,9 @@ def main():
             width=SCREEN_WIDTH, height=SCREEN_HEIGHT, order="F"
         )
         while True:
-            root_console.print(x=player_x, y=player_y, text="@")
+            root_console.print(
+                x=player.x, y=player.y, text=player.char, fg=player.color
+            )
             context.present(root_console)
             root_console.clear()
 
@@ -42,8 +47,7 @@ def main():
                 action = handler.on_event(event)
 
                 if isinstance(action, MovementAction):
-                    player_x += action.dx
-                    player_y += action.dy
+                    player.move(dx=action.dx, dy=action.dy)
                 else:
                     continue
 
