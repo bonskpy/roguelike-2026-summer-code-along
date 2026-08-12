@@ -16,9 +16,6 @@ SCREEN_HEIGHT = 80
 def main():
     print("Hello from rogue0!")
 
-    player_x = int(SCREEN_WIDTH / 2)
-    player_y = int(SCREEN_HEIGHT / 2)
-
     player = Entity(x=int(SCREEN_WIDTH / 2), y=int(SCREEN_HEIGHT / 2), char="@")
     monster = Entity(x=int(SCREEN_WIDTH / 4), y=int(SCREEN_HEIGHT / 4), char="A")
 
