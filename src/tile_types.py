@@ -26,7 +26,7 @@ def new_tile(
     dark: Tuple[int, Tuple[int, int, int], Tuple[int, int, int]],
 ) -> np.ndarray:
     """Define a new tile type such as wall or floor."""
-    return np.array((walkable, transparent, dark), np.dtype)
+    return np.array((walkable, transparent, dark), dtype=tile_dt)
 
 
 wall = new_tile(

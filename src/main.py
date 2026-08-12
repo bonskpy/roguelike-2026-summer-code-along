@@ -2,10 +2,14 @@ import tcod
 
 from engine import Engine
 from entity import Entity
+from game_map import GameMap
 from input_handlers import MainHandler
 
 SCREEN_WIDTH = 80
-SCREEN_HEIGHT = 80
+SCREEN_HEIGHT = 50
+
+MAP_WIDTH = 80
+MAP_HEIGHT = 45
 
 # Typecasting is just passing variable to a constructor of chosed data type.
 # In case of custom classes a dudermethod has to be prepared. Casting float to int
@@ -20,8 +24,11 @@ def main():
     monster = Entity(x=int(SCREEN_WIDTH / 4), y=int(SCREEN_HEIGHT / 4), char="A")
 
     entities = {player, monster}
+    map = GameMap(width=MAP_WIDTH, height=MAP_HEIGHT)
     main_handler = MainHandler()
-    engine = Engine(entities=entities, event_handler=main_handler, player=player)
+    engine = Engine(
+        entities=entities, event_handler=main_handler, game_map=map, player=player
+    )
 
     tileset = tcod.tileset.load_tilesheet(
         "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
