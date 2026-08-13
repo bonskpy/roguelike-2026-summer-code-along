@@ -1,16 +1,14 @@
 import numpy as np
 from tcod.console import Console
 
-from tile_types import floor, wall
+from tile_types import wall
 
 
 class GameMap:
     def __init__(self, width: int, height: int) -> None:
         self.width = width
         self.height = height
-        self.tiles = np.full(shape=(width, height), fill_value=floor, order="F")
-
-        self.tiles[30:33, 22] = wall
+        self.tiles = np.full(shape=(width, height), fill_value=wall, order="F")
 
     def in_bounds(self, coord_x: int, coord_y: int) -> bool:
         """Check if a point is in the map using x and y coordinates."""

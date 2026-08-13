@@ -2,8 +2,8 @@ import tcod
 
 from engine import Engine
 from entity import Entity
-from game_map import GameMap
 from input_handlers import MainHandler
+from map_generator import generate_dungeon
 
 SCREEN_WIDTH = 80
 SCREEN_HEIGHT = 50
@@ -24,14 +24,14 @@ def main():
     monster = Entity(x=int(SCREEN_WIDTH / 4), y=int(SCREEN_HEIGHT / 4), char="A")
 
     entities = {player, monster}
-    map = GameMap(width=MAP_WIDTH, height=MAP_HEIGHT)
+    dungeon = generate_dungeon(dungeon_width=MAP_WIDTH, dungeon_height=MAP_HEIGHT)
     main_handler = MainHandler()
     engine = Engine(
-        entities=entities, event_handler=main_handler, game_map=map, player=player
+        entities=entities, event_handler=main_handler, game_map=dungeon, player=player
     )
 
     tileset = tcod.tileset.load_tilesheet(
-        "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
+        "./src/dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
     )
 
     with tcod.context.new(
