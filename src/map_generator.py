@@ -1,4 +1,7 @@
-from typing import Tuple
+import random
+from typing import Iterator, Tuple
+
+import tcod
 
 import tile_types
 from game_map import GameMap
@@ -33,4 +36,25 @@ def generate_dungeon(dungeon_width: int, dungeon_height: int) -> GameMap:
     dungeon.tiles[room1.inner] = tile_types.floor
     dungeon.tiles[room2.inner] = tile_types.floor
 
+    for x, y in generate_tunnel(start=(room1.center), end=(room2.center)):
+        dungeon.tiles[x, y] = tile_types.floor
+
     return dungeon
+
+
+def generate_tunnel(
+    start: Tuple[int, int], end: Tuple[int, int]
+) -> Iterator[Tuple[int, int]]:
+    x1, y1 = start
+    x2, y2 = end
+
+    if random.random() < 0.5:
+        corner_x, corner_y = x2, y1
+    else:
+        corner_x, corner_y = x1, y2
+
+    # Generate the coordinates for this tunnel.
+    for x, y in tcod.los.bresenham((x1, y1), (corner_x, corner_y)).tolist():
+        yield x, y
+    for x, y in tcod.los.bresenham((corner_x, corner_y), (x2, y2)).tolist():
+        yield x, y

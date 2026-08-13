@@ -21,7 +21,7 @@ def main():
     print("Hello from rogue0!")
 
     player = Entity(x=int(SCREEN_WIDTH / 2), y=int(SCREEN_HEIGHT / 2), char="@")
-    monster = Entity(x=int(SCREEN_WIDTH / 4), y=int(SCREEN_HEIGHT / 4), char="A")
+    monster = Entity(x=int(SCREEN_WIDTH / 4), y=int(SCREEN_HEIGHT / 2), char="A")
 
     entities = {player, monster}
     dungeon = generate_dungeon(dungeon_width=MAP_WIDTH, dungeon_height=MAP_HEIGHT)
@@ -31,7 +31,7 @@ def main():
     )
 
     tileset = tcod.tileset.load_tilesheet(
-        "./src/dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
+        "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
     )
 
     with tcod.context.new(
