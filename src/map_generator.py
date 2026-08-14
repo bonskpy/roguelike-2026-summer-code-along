@@ -1,10 +1,19 @@
+# Enable postponed evaluation for all annotations which will supress undefined name warning for overlaps() method.
+# Without this line Python evaluates all type annotations at runtime, which might impact performance when importing large libraries for typing puroses (ie. numpy).
+# This line should be right after any file-level docstrings.
+# It simply tells Python to treat all type hints as strings.
+from __future__ import annotations
+
 import random
-from typing import Iterator, Tuple
+from typing import TYPE_CHECKING, Iterator, List, Tuple
 
 import tcod
 
 import tile_types
 from game_map import GameMap
+
+if TYPE_CHECKING:
+    from entity import Entity
 
 
 class RectangularRoom:
@@ -26,18 +35,52 @@ class RectangularRoom:
     def inner(self) -> Tuple[slice, slice]:
         return slice(self.x1 + 1, self.x2), slice(self.y1 + 1, self.y2)
 
+    def overlaps(self, other: RectangularRoom) -> bool:
+        """This method returns True if rooms overlap."""
+        return (
+            self.x1 <= other.x2
+            and self.x2 >= other.x1
+            and self.y1 <= other.y2
+            and self.y2 >= other.y1
+        )
 
-def generate_dungeon(dungeon_width: int, dungeon_height: int) -> GameMap:
+
+def generate_dungeon(
+    room_max_size: int,
+    room_min_size: int,
+    room_count: int,
+    dungeon_width: int,
+    dungeon_height: int,
+    player: Entity,
+) -> GameMap:
+    """Generate a new dungeon."""
+
     dungeon = GameMap(width=dungeon_width, height=dungeon_height)
+    rooms: List[RectangularRoom] = []
 
-    room1 = RectangularRoom(x=10, y=15, width=15, height=20)
-    room2 = RectangularRoom(x=35, y=15, width=20, height=25)
+    for i in range(room_count):
+        room_width = random.randint(room_min_size, room_max_size)
+        room_height = random.randint(room_min_size, room_max_size)
 
-    dungeon.tiles[room1.inner] = tile_types.floor
-    dungeon.tiles[room2.inner] = tile_types.floor
+        room_x = random.randint(0, dungeon_width - room_width - 1)
+        room_y = random.randint(0, dungeon_height - room_height - 1)
 
-    for x, y in generate_tunnel(start=(room1.center), end=(room2.center)):
-        dungeon.tiles[x, y] = tile_types.floor
+        new_room = RectangularRoom(
+            x=room_x, y=room_y, width=room_width, height=room_height
+        )
+
+        if any(new_room.overlaps(other_room) for other_room in rooms):
+            continue
+
+        dungeon.tiles[new_room.inner] = tile_types.floor
+
+        if len(rooms) == 0:  # meaning this is the first room
+            player.x, player.y = new_room.center
+        else:
+            for x, y in generate_tunnel(new_room.center, rooms[-1].center):
+                dungeon.tiles[x, y] = tile_types.floor
+
+        rooms.append(new_room)
 
     return dungeon
 
