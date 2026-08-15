@@ -1,4 +1,4 @@
-I think that game should be equipped with proper logging from the start:
-https://www.dash0.com/guides/logging-in-python
-https://www.youtube.com/watch?v=9L77QExPmI0
+This repo contains a fun project build along with r/roguelikedev
 
+In case of emergency you can run the game using uv:
+`uv run src/main.py`
