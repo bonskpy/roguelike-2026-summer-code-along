@@ -25,9 +25,7 @@ def main():
     print("Hello from rogue0!")
 
     player = Entity(x=int(SCREEN_WIDTH / 2), y=int(SCREEN_HEIGHT / 2), char="@")
-    monster = Entity(x=int(SCREEN_WIDTH / 4), y=int(SCREEN_HEIGHT / 2), char="A")
 
-    entities = {player, monster}
     dungeon = generate_dungeon(
         room_max_size=ROOM_MAX_SIZE,
         room_min_size=ROOM_MIN_SIZE,
@@ -37,9 +35,7 @@ def main():
         player=player,
     )
     main_handler = MainHandler()
-    engine = Engine(
-        entities=entities, event_handler=main_handler, game_map=dungeon, player=player
-    )
+    engine = Engine(event_handler=main_handler, game_map=dungeon, player=player)
 
     tileset = tcod.tileset.load_tilesheet(
         "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
