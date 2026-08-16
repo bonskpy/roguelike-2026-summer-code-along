@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Iterator, List, Tuple
 
 import tcod
 
+import entity_factories
 import tile_types
 from game_map import GameMap
 
@@ -45,12 +46,41 @@ class RectangularRoom:
         )
 
 
+def place_entities(
+    room: RectangularRoom, dungeon: GameMap, monster_max_count: int
+) -> None:
+    """Place up to given number of  entities in a room."""
+
+    monster_count = random.randint(0, monster_max_count)
+
+    if monster_count == 0:
+        return
+
+    for i in range(monster_count):
+        monster_x = random.randint(room.x1 + 1, room.x2 - 1)
+        monster_y = random.randint(room.y1 + 1, room.y2 - 1)
+
+        if not any(
+            entity.x == monster_x and entity.y == monster_y
+            for entity in dungeon.entities
+        ):
+            if random.random() < 0.8:
+                entity_factories.orc.spawn(
+                    entity_x=monster_x, entity_y=monster_y, dungeon=dungeon
+                )
+            else:
+                entity_factories.troll.spawn(
+                    entity_x=monster_x, entity_y=monster_y, dungeon=dungeon
+                )
+
+
 def generate_dungeon(
     room_max_size: int,
     room_min_size: int,
     room_count: int,
     dungeon_width: int,
     dungeon_height: int,
+    monster_max_count: int,
     player: Entity,
 ) -> GameMap:
     """Generate a new dungeon."""
@@ -79,6 +109,10 @@ def generate_dungeon(
         else:
             for x, y in generate_tunnel(new_room.center, rooms[-1].center):
                 dungeon.tiles[x, y] = tile_types.floor
+
+        place_entities(
+            room=new_room, dungeon=dungeon, monster_max_count=monster_max_count
+        )
 
         rooms.append(new_room)
 

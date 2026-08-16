@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING, Iterable, Optional
 
 import numpy as np
 from tcod.console import Console
@@ -35,3 +35,13 @@ class GameMap:
         for entity in self.entities:
             if self.visible[entity.x, entity.y]:
                 console.print(x=entity.x, y=entity.y, text=entity.char, fg=entity.color)
+
+    def get_entity_at_destination(
+        self, destination_x: int, destination_y: int
+    ) -> Optional[Entity]:
+        """Checks for blocking entity at destination coordinates and returns it if present."""
+        for entity in self.entities:
+            if entity.x == destination_x and entity.y == destination_y:
+                if entity.blocks_movement:
+                    return entity
+        return None

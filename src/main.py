@@ -1,7 +1,8 @@
 import tcod
+import copy
 
 from engine import Engine
-from entity import Entity
+import entity_factories
 from input_handlers import MainHandler
 from map_generator import generate_dungeon
 
@@ -15,6 +16,8 @@ ROOM_MAX_SIZE = 10
 ROOM_MIN_SIZE = 6
 ROOM_MAX_COUNT = 30
 
+MONSTER_MAX_COUNT = 2
+
 # Typecasting is just passing variable to a constructor of chosed data type.
 # In case of custom classes a dudermethod has to be prepared. Casting float to int
 # will turncate return value. Casting string decimal to int throws error. It is good
@@ -24,7 +27,7 @@ ROOM_MAX_COUNT = 30
 def main():
     print("Hello from rogue0!")
 
-    player = Entity(x=int(SCREEN_WIDTH / 2), y=int(SCREEN_HEIGHT / 2), char="@")
+    player = copy.deepcopy(entity_factories.player)
 
     dungeon = generate_dungeon(
         room_max_size=ROOM_MAX_SIZE,
@@ -32,6 +35,7 @@ def main():
         room_count=ROOM_MAX_COUNT,
         dungeon_width=MAP_WIDTH,
         dungeon_height=MAP_HEIGHT,
+        monster_max_count=MONSTER_MAX_COUNT,
         player=player,
     )
     main_handler = MainHandler()
