@@ -18,21 +18,67 @@ class EscapeAction(Action):
         raise SystemExit()
 
 
-class MovementAction(Action):
+class ActionWithDirection(Action):
     def __init__(self, dx: int, dy: int):
         super().__init__()
 
         self.dx = dx
         self.dy = dy
 
+        def perform(self, engine: Engine, entity: Entity) -> None:
+            raise NotImplementedError()
+
+
+class BumpAction(ActionWithDirection):
+    """Utility class deciding which Action should be taken next: mele or move."""
+
     def perform(self, engine: Engine, entity: Entity) -> None:
-        target_x = entity.x + self.dx
-        target_y = entity.y + self.dy
+        destination_x = entity.x + self.dx
+        destination_y = entity.y + self.dy
+        target = engine.game_map.get_entity_at_destination(
+            destination_x=destination_x, destination_y=destination_y
+        )
+        if target:
+            MeleAction(dx=self.dx, dy=self.dy).perform(engine=engine, entity=entity)
+        else:
+            MovementAction(dx=self.dx, dy=self.dy).perform(engine=engine, entity=entity)
 
-        if not engine.game_map.in_bounds(target_x, target_y):
+
+class MeleAction(ActionWithDirection):
+    """Class implementing mele attack movement."""
+
+    def perform(self, engine: Engine, entity: Entity) -> None:
+        destination_x = entity.x + self.dx
+        destination_y = entity.y + self.dy
+        target = engine.game_map.get_entity_at_destination(
+            destination_x=destination_x, destination_y=destination_y
+        )
+        if not target:
             return
 
-        if not engine.game_map.tiles["walkable"][target_x, target_y]:
+        print(f"You kicked {target.name}!")
+
+
+class MovementAction(ActionWithDirection):
+    """Class implementing entity movement."""
+
+    def perform(self, engine: Engine, entity: Entity) -> None:
+        destination_x = entity.x + self.dx
+        destination_y = entity.y + self.dy
+
+        # Check if tile is in bounds of the map
+        if not engine.game_map.in_bounds(destination_x, destination_y):
             return
 
+        # Check if tile is walkable
+        if not engine.game_map.tiles["walkable"][destination_x, destination_y]:
+            return
+
+        # Check if there is an entity blocking move on the target tile
+        if engine.game_map.get_entity_at_destination(
+            destination_x=destination_x, destination_y=destination_y
+        ):
+            return
+
+        # Move the entity if checks went through
         entity.move(self.dx, self.dy)

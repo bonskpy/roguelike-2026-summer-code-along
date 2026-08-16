@@ -5,7 +5,7 @@ from typing import (  # Optional is a type annotation for types that can be None
 
 import tcod.event  # I am going to use only event module
 
-from actions import Action, EscapeAction, MovementAction
+from actions import Action, BumpAction, EscapeAction
 
 
 # This defines contract. Any class implementing on_event() is a Handler.
@@ -19,13 +19,13 @@ class MainHandler:
 
         match event:
             case tcod.event.KeyDown(sym=tcod.event.KeySym.UP):
-                action = MovementAction(dx=0, dy=-1)
+                action = BumpAction(dx=0, dy=-1)
             case tcod.event.KeyDown(sym=tcod.event.KeySym.DOWN):
-                action = MovementAction(dx=0, dy=1)
+                action = BumpAction(dx=0, dy=1)
             case tcod.event.KeyDown(sym=tcod.event.KeySym.LEFT):
-                action = MovementAction(dx=-1, dy=0)
+                action = BumpAction(dx=-1, dy=0)
             case tcod.event.KeyDown(sym=tcod.event.KeySym.RIGHT):
-                action = MovementAction(dx=1, dy=0)
+                action = BumpAction(dx=1, dy=0)
             case tcod.event.Quit():
                 action = EscapeAction()
 

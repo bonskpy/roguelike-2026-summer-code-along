@@ -21,6 +21,12 @@ class Engine:
         self.player = player
         self.update_fov()
 
+    def handle_enemy_turn(self) -> None:
+        """Display a notification that visible entity which is not a player is willing to act."""
+        for entity in self.game_map.entities - {self.player}:
+            if self.game_map.visible[entity.x, entity.y]:
+                print(f"{entity.name} is wondering when it will be able to act.")
+
     def handle_events(self, events: Iterable[Any]) -> None:
         for event in events:
             action = self.event_handler.on_event(event)
@@ -29,6 +35,8 @@ class Engine:
                 continue
 
             action.perform(engine=self, entity=self.player)
+
+            self.handle_enemy_turn()
 
             self.update_fov()
 
