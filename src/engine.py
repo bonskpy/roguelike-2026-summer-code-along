@@ -1,22 +1,17 @@
-from typing import Any, Iterable
-
 from tcod.console import Console
 from tcod.context import Context
 from tcod.map import compute_fov
 
 from entity import Entity
 from game_map import GameMap
-from input_handlers import MainHandler
 
 
 class Engine:
     def __init__(
         self,
-        event_handler: MainHandler,
         game_map: GameMap,
         player: Entity,
     ) -> None:
-        self.event_handler = event_handler
         self.game_map = game_map
         self.player = player
         self.update_fov()
@@ -26,19 +21,6 @@ class Engine:
         for entity in self.game_map.entities - {self.player}:
             if self.game_map.visible[entity.x, entity.y]:
                 print(f"{entity.name} is wondering when it will be able to act.")
-
-    def handle_events(self, events: Iterable[Any]) -> None:
-        for event in events:
-            action = self.event_handler.on_event(event)
-
-            if not action:
-                continue
-
-            action.perform(engine=self, entity=self.player)
-
-            self.handle_enemy_turn()
-
-            self.update_fov()
 
     def render(self, console: Console, context: Context) -> None:
         self.game_map.render(console=console)

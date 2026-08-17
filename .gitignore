@@ -117,4 +117,3 @@ dmypy.json
 # Ignores related to rogue0
 NOTES.md
 .zed/
-.src/__pycache__/

@@ -1,4 +1,9 @@
+from __future__ import annotations
+
 from typing import (  # Optional is a type annotation for types that can be None
+    TYPE_CHECKING,
+    Any,
+    Iterable,
     Optional,
     Protocol,
 )
@@ -7,6 +12,9 @@ import tcod.event  # I am going to use only event module
 
 from actions import Action, BumpAction, EscapeAction
 
+if TYPE_CHECKING:
+    from engine import Engine
+
 
 # This defines contract. Any class implementing on_event() is a Handler.
 class Handler(Protocol):
@@ -14,6 +22,21 @@ class Handler(Protocol):
 
 
 class MainHandler:
+    def __init__(self, engine: Engine) -> None:
+        self.engine = engine
+
+    def handle_events(self, events: Iterable[Any]) -> None:
+        for event in events:
+            action = self.on_event(event)
+
+            if not action:
+                continue
+
+            action.perform(engine=self.engine, entity=self.engine.player)
+
+            self.engine.handle_enemy_turn()
+            self.engine.update_fov()
+
     def on_event(self, event: tcod.event.Event) -> Optional[Action]:
         action: Optional[Action] = None
 
