@@ -6,15 +6,19 @@ import numpy as np
 from tcod.console import Console
 
 if TYPE_CHECKING:
+    from engine import Engine
     from entity import Entity
 
 from tile_types import SHROUD, wall
 
 
 class GameMap:
-    def __init__(self, width: int, height: int, entities: Iterable[Entity]) -> None:
+    def __init__(
+        self, width: int, height: int, engine: Engine, entities: Iterable[Entity]
+    ) -> None:
         self.width = width
         self.height = height
+        self.engine = engine
         self.entities = set(entities)
         self.tiles = np.full(shape=(width, height), fill_value=wall, order="F")
         self.visible = np.full(shape=(width, height), fill_value=False, order="F")

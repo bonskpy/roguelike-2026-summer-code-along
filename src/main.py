@@ -4,7 +4,6 @@ import tcod
 
 import entity_factories
 from engine import Engine
-from input_handlers import MainHandler
 from map_generator import generate_dungeon
 
 SCREEN_WIDTH = 80
@@ -29,18 +28,19 @@ def main():
     print("Hello from rogue0!")
 
     player = copy.deepcopy(entity_factories.player)
+    engine = Engine(player=player)
 
-    dungeon = generate_dungeon(
+    engine.game_map = generate_dungeon(
         room_max_size=ROOM_MAX_SIZE,
         room_min_size=ROOM_MIN_SIZE,
         room_count=ROOM_MAX_COUNT,
         dungeon_width=MAP_WIDTH,
         dungeon_height=MAP_HEIGHT,
+        engine=engine,
         monster_max_count=MONSTER_MAX_COUNT,
-        player=player,
     )
-    engine = Engine(game_map=dungeon, player=player)
-    main_handler = MainHandler(engine)
+
+    engine.update_fov()
 
     tileset = tcod.tileset.load_tilesheet(
         "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
@@ -55,7 +55,7 @@ def main():
         while True:
             events = tcod.event.wait()
             engine.render(console=root_console, context=context)
-            main_handler.handle_events(events)
+            engine.event_handler.handle_events(events)
 
 
 if __name__ == "__main__":

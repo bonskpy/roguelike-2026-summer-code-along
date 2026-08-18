@@ -32,7 +32,7 @@ class MainHandler:
             if not action:
                 continue
 
-            action.perform(engine=self.engine, entity=self.engine.player)
+            action.perform()
 
             self.engine.handle_enemy_turn()
             self.engine.update_fov()
@@ -42,15 +42,15 @@ class MainHandler:
 
         match event:
             case tcod.event.KeyDown(sym=tcod.event.KeySym.UP):
-                action = BumpAction(dx=0, dy=-1)
+                action = BumpAction(entity=self.engine.player, dx=0, dy=-1)
             case tcod.event.KeyDown(sym=tcod.event.KeySym.DOWN):
-                action = BumpAction(dx=0, dy=1)
+                action = BumpAction(entity=self.engine.player, dx=0, dy=1)
             case tcod.event.KeyDown(sym=tcod.event.KeySym.LEFT):
-                action = BumpAction(dx=-1, dy=0)
+                action = BumpAction(entity=self.engine.player, dx=-1, dy=0)
             case tcod.event.KeyDown(sym=tcod.event.KeySym.RIGHT):
-                action = BumpAction(dx=1, dy=0)
+                action = BumpAction(entity=self.engine.player, dx=1, dy=0)
             case tcod.event.Quit():
-                action = EscapeAction()
+                action = EscapeAction(entity=self.engine.player)
 
         return action
 

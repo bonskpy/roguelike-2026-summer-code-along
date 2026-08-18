@@ -14,7 +14,7 @@ import tile_types
 from game_map import GameMap
 
 if TYPE_CHECKING:
-    from entity import Entity
+    from engine import Engine
 
 
 class RectangularRoom:
@@ -80,12 +80,15 @@ def generate_dungeon(
     room_count: int,
     dungeon_width: int,
     dungeon_height: int,
+    engine: Engine,
     monster_max_count: int,
-    player: Entity,
 ) -> GameMap:
     """Generate a new dungeon."""
 
-    dungeon = GameMap(width=dungeon_width, height=dungeon_height, entities=[player])
+    player = engine.player
+    dungeon = GameMap(
+        width=dungeon_width, height=dungeon_height, engine=engine, entities=[player]
+    )
     rooms: List[RectangularRoom] = []
 
     for i in range(room_count):
@@ -105,7 +108,7 @@ def generate_dungeon(
         dungeon.tiles[new_room.inner] = tile_types.floor
 
         if len(rooms) == 0:  # meaning this is the first room
-            player.x, player.y = new_room.center
+            player.place(*new_room.center, dungeon)
         else:
             for x, y in generate_tunnel(new_room.center, rooms[-1].center):
                 dungeon.tiles[x, y] = tile_types.floor

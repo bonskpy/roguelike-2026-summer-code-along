@@ -1,20 +1,29 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from tcod.console import Console
 from tcod.context import Context
 from tcod.map import compute_fov
 
 from entity import Entity
 from game_map import GameMap
+from input_handlers import MainHandler
+
+if TYPE_CHECKING:
+    from entity import Entity
+    from game_map import GameMap
 
 
 class Engine:
+    game_map: GameMap
+
     def __init__(
         self,
-        game_map: GameMap,
         player: Entity,
     ) -> None:
-        self.game_map = game_map
         self.player = player
-        self.update_fov()
+        self.event_handler: MainHandler = MainHandler(self)
 
     def handle_enemy_turn(self) -> None:
         """Display a notification that visible entity which is not a player is willing to act."""
